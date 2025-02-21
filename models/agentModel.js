@@ -21,16 +21,14 @@ const agentSchema = new mongoose.Schema(
     },
     agent_mobile: {
       type: String,
-      //  required:[true,"Please Enter Agent Mobile"],
+      required: [true, "Please Enter Agent Mobile"],
       unique: true,
       // validate:[validator.isMobilePhone,"plz enter a valid Mobile"]
     },
     agent_password: {
       type: String,
-      unique: true,
-      required: [true, "Please Enter Your password"],
-      minLength: [6, "minimum 6 charactor take of pass"],
-      select: false,
+
+      required: true,
     },
 
     role: {
@@ -72,12 +70,12 @@ const agentSchema = new mongoose.Schema(
 );
 
 // convert pass in bcrypt hash then save
-agentSchema.pre("save", async function (next) {
-  if (!this.isModified("agent_password")) {
-    next();
-  }
-  this.agent_password = await bcrypt.hash(this.agent_password, 10);
-});
+// agentSchema.pre("save", async function (next) {
+//   if (!this.isModified("agent_password")) {
+//     next();
+//   }
+//   this.agent_password = await bcrypt.hash(this.agent_password, 10);
+// });
 
 // JWT Token
 
@@ -93,7 +91,6 @@ agentSchema.methods.getJWTToken = function () {
 //      expiresIn: "5d",
 //     });
 // };
-
 
 // compare password
 

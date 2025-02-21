@@ -3,7 +3,7 @@ const connectDatabase = require("./config/database");
 const { app } = require("./app");
 
 // const PORT = process.env.PORT || 6001;
-const PORT = 3000;
+const PORT = 4000;
 connectDatabase();
 app.listen(PORT, () => {
   console.log(`Server is working on http://localhost:${PORT}`);

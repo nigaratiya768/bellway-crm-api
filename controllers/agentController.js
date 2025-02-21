@@ -6,15 +6,53 @@ const LoginHistory = require("../models/LoginHistory");
 const bcrypt = require("bcryptjs");
 const useragent = require("express-useragent");
 const mongoose = require("mongoose");
-exports.createAgent = catchAsyncErrors(async (req, res, next) => {
-  const agent = await Agent.create(req.body);
+exports.createAgent = async (req, res, next) => {
+  try {
+    console.log("trying to create agent ", req.body);
+    // const agent = await Agent.create(req.body);
+    const {
+      agent_name,
+      agent_email,
+      agent_mobile,
+      agent_password,
+      agent_roll,
+      agent_status,
+      assigntl,
+      client_access,
+      role,
+    } = req.body;
+    if (!agent_name || !agent_email || !agent_mobile || !agent_password) {
+      return res.status(400).json({ msg: "please enter required field" });
+    }
+    const emailExist = await Agent.findOne({ agent_email });
+    if (emailExist) {
+      return res.status(400).json({ msg: "email already exist" });
+    }
 
-  res.status(201).json({
-    success: true,
-    agent,
-    message: "Agent Added Successfully....",
-  });
-});
+    const hashPassword = bcrypt.hashSync(agent_password, 10);
+    const agent = new Agent({
+      agent_name,
+      agent_email,
+      agent_mobile,
+      agent_password: hashPassword,
+      agent_roll,
+      agent_status,
+      assigntl,
+      client_access,
+      role,
+    });
+    console.log("before save", agent);
+    await agent.save();
+    res.status(201).json({
+      success: true,
+      agent,
+      message: "Agent Added Successfully....",
+    });
+  } catch (error) {
+    console.log("error in createAgent", error);
+    return res.status(500).json({ msg: "server error" });
+  }
+};
 
 // Delete Agent --admin
 
